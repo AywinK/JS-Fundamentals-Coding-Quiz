@@ -182,4 +182,5 @@ submitBtn.addEventListener("click", function (event) {
     var hiscoresDataString = JSON.stringify(hiscoresData);
     console.log(hiscoresData);
     localStorage.setItem("hiscoresData", hiscoresDataString);
+    location.href = "highscores.html";
 });
