@@ -4,9 +4,9 @@ var timeAllocated = questions.length * 10;
 // initialises time variable for quiz
 var time = timeAllocated;
 // stores start button reference as variable
-var startBtm = document.getElementById("start");
+var startBtn = document.getElementById("start");
 // start button actions
-startBtm.addEventListener("click", function () {
+startBtn.addEventListener("click", function () {
     // stores reference to start screen element
     var startScreen = document.getElementById("start-screen");
     console.log("tests event listen on start button");
@@ -44,6 +44,7 @@ startBtm.addEventListener("click", function () {
                 finalScoreElement.innerText = score;
             } else {
                 finalScoreElement.innerText = 0;
+                score = 0;
             }
         }
     }, 1000);
@@ -60,7 +61,6 @@ var choiceIsSelected = false;
 // event listener
 var choicesElement = document.getElementById("choices");
 choicesElement, addEventListener("click", function (event) {
-    event.stopPropagation();
     console.log(event);
     var questionObj = questions[questionsIndex];
     console.log(questionObj.answer);
@@ -104,9 +104,8 @@ choicesElement, addEventListener("click", function (event) {
         givesFeedback(choiceIsCorrect)
         questionsIndex++;
         asksQuestion();
-    } else {
+    } if (score < 0) {
         score = 0;
-        console.log(`score is ${score}`);
     }
 });
 
@@ -135,13 +134,52 @@ function generateChoices(questionObj) {
 function givesFeedback(choiceIsCorrect) {
     // references feedback HTML element
     var feedbackElement = document.getElementById("feedback");
+    var noAudioElementFound = document.getElementById("feedback-audio") === null;
+    if (noAudioElementFound) {
+        var audioElement = document.createElement("audio");
+        console.log(audioElement);
+        audioElement.setAttribute("id", "feedback-audio");
+    } else {
+        var audioElement = document.getElementById("feedback-audio");
+    }
     if (choiceIsCorrect) {
         feedbackElement.innerText = "Correct!";
+        console.log(document.getElementById("feedback-audio"));
+        audioElement.setAttribute("src", "assets/sfx/correct.wav");
+        audioElement.play();
     } else {
         feedbackElement.innerText = "Wrong!";
+        audioElement.setAttribute("src", "assets/sfx/incorrect.wav");
+        audioElement.play();
     }
     feedbackElement.classList.remove("hide");
     setTimeout(function () {
         feedbackElement.classList.add("hide");
-    }, 4000);
+    }, 9000);
 }
+
+// references submit button
+var submitBtn = document.getElementById("submit");
+// submit button actions
+submitBtn.addEventListener("click", function (event) {
+    console.log("submit is working");
+    // references input field
+    var userInitials = document.getElementById("initials");
+    var initials = userInitials.value;
+    var noHiscoresDataFound = localStorage.getItem("hiscoresData") === null;
+    if (noHiscoresDataFound) {
+        var hiscoresData = [];
+        console.log("no data found")
+    } else {
+        var hiscoresData = JSON.parse(localStorage.getItem("hiscoresData"));
+        console.log("hiscores found");
+    }
+    var hiscoresDataObj = [{
+        initials: initials,
+        score: score
+    }];
+    hiscoresData.push(hiscoresDataObj)
+    var hiscoresDataString = JSON.stringify(hiscoresData);
+    console.log(hiscoresData);
+    localStorage.setItem("hiscoresData", hiscoresDataString);
+});
