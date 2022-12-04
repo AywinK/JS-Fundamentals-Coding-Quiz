@@ -43,7 +43,8 @@ startBtn.addEventListener("click", function () {
             if (choiceIsSelected) {
                 finalScoreElement.innerText = score;
             } else {
-                finalScoreElement.innerText = 0;
+                finalScoreElement.innerText = "0 🦉";
+                finalScoreElement.setAttribute("style", "animation: grow 60s ease-out infinite")
                 score = 0;
             }
         }
