@@ -14,12 +14,10 @@ startBtm.addEventListener("click", function () {
     startScreen.classList.add("hide");
     // checks if questions data is loaded
     console.log(questions);
-    // references questions and feedback element on webpage
+    // references questions on webpage
     var questionsElement = document.getElementById("questions");
-    var feedbackElement = document.getElementById("feedback");
-    // show questions and feedback html element
+    // show questions html element
     questionsElement.classList.remove("hide");
-    feedbackElement.classList.remove("hide");
     // sets timer variable to time one second intervals
     var timer = setInterval(function () {
         // gets reference to time numerical value specific span on webpage
@@ -39,45 +37,87 @@ startBtm.addEventListener("click", function () {
             var endScreenElement = document.getElementById("end-screen");
             // show end screen
             endScreenElement.classList.remove("hide");
+            timerElement.innerHTML = 0;
+            // outputs appropriate final score to end screen
+            var finalScoreElement = document.getElementById("final-score");
+            if (choiceIsSelected) {
+                finalScoreElement.innerText = score;
+            } else {
+                finalScoreElement.innerText = 0;
+            }
         }
     }, 1000);
     asksQuestion();
 });
 
-    // initialises questionsIndex
-    var questionsIndex = 0;
+// initialises questionsIndex
+var questionsIndex = 0;
+// initialises score
+var score = 0;
+// checks if user selected an option during quiz
+var choiceIsSelected = false;
+
+// event listener
+var choicesElement = document.getElementById("choices");
+choicesElement, addEventListener("click", function (event) {
+    event.stopPropagation();
+    console.log(event);
+    var questionObj = questions[questionsIndex];
+    console.log(questionObj.answer);
+    var buttonClicked = (event.target.tagName.toLowerCase() === "button") &&
+        event.path[1].className === "choices";
+    var choiceIsCorrect = event.target.value === questionObj.answer;
+    var isLastQuestion = questionsIndex === questions.length - 1;
+    if (isLastQuestion && buttonClicked && choiceIsCorrect) {
+        choiceIsSelected = true;
+        console.log("button - choice is correct + last question");
+        choicesElement.innerHTML = ``;
+        score = time;
+        console.log(`score is ${score}`);
+        givesFeedback(choiceIsCorrect)
+        time = 0;
+    } else if (isLastQuestion && buttonClicked && !choiceIsCorrect) {
+        choiceIsSelected = true;
+        console.log("button - choice is correct + last question");
+        choicesElement.innerHTML = ``;
+        time -= 10;
+        score = time;
+        console.log(`score is ${score}`);
+        givesFeedback(choiceIsCorrect)
+        time = 0;
+    } else if (buttonClicked && choiceIsCorrect) {
+        choiceIsSelected = true;
+        console.log("button - choice is correct");
+        choicesElement.innerHTML = ``;
+        score = time;
+        console.log(`score is ${score}`);
+        givesFeedback(choiceIsCorrect)
+        questionsIndex++;
+        asksQuestion();
+    } else if (buttonClicked && !choiceIsCorrect) {
+        choiceIsSelected = true;
+        console.log("button - choice is wrong");
+        time -= 10;
+        choicesElement.innerHTML = ``;
+        score = time;
+        console.log(`score is ${score}`);
+        givesFeedback(choiceIsCorrect)
+        questionsIndex++;
+        asksQuestion();
+    } else {
+        score = 0;
+        console.log(`score is ${score}`);
+    }
+});
 
 function asksQuestion() {
-    // references to question title and feedback element
-    var feedbackElement = document.getElementById("feedback");
+    // references to question title element
     var questionTitleElement = document.getElementById("question-title");
-    var choicesElement = document.getElementById("choices");
     // loops through questions and appends question and choices to screen
     var questionObj = questions[questionsIndex];
     questionTitleElement.innerHTML = questionObj.question;
     generateChoices(questionObj);
-    // listens for user click on choice button within choices div
-    choicesElement, addEventListener("click", function (event) {
-        event.stopPropagation();
-        console.log(event);
-        var buttonClicked = (event.target.tagName.toLowerCase() === "button") &&
-            event.path[1].className === "choices";
-        var choiceIsCorrect = event.target.value === questionObj.answer;
-        if (buttonClicked && choiceIsCorrect) {
-            console.log("button - choice is correct");
-            choicesElement.innerHTML = ``;
-            questionsIndex++;
-            asksQuestion();
-            // changeQuestion(questionsIndex);
-        } else if (buttonClicked && !choiceIsCorrect) {
-            console.log("button - choice is wrong");
-            choicesElement.innerHTML = ``;
-            time -= 10;
-            questionsIndex++;
-            asksQuestion()
-            // changeQuestion(questionsIndex);
-        }
-    })
+    choiceIsSelected = false;
 }
 
 function generateChoices(questionObj) {
@@ -92,10 +132,16 @@ function generateChoices(questionObj) {
     }
 }
 
-// function changeQuestion(questionsIndex) {
-
-// }
-
-function checksChoice(event) {
-
+function givesFeedback(choiceIsCorrect) {
+    // references feedback HTML element
+    var feedbackElement = document.getElementById("feedback");
+    if (choiceIsCorrect) {
+        feedbackElement.innerText = "Correct!";
+    } else {
+        feedbackElement.innerText = "Wrong!";
+    }
+    feedbackElement.classList.remove("hide");
+    setTimeout(function () {
+        feedbackElement.classList.add("hide");
+    }, 4000);
 }
