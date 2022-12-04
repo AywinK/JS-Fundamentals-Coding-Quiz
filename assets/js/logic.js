@@ -41,24 +41,61 @@ startBtm.addEventListener("click", function () {
             endScreenElement.classList.remove("hide");
         }
     }, 1000);
-    quizRunning();
+    asksQuestion();
 });
 
-function quizRunning() {
-    // references to elements in questions and feedback element
+    // initialises questionsIndex
+    var questionsIndex = 0;
+
+function asksQuestion() {
+    // references to question title and feedback element
     var feedbackElement = document.getElementById("feedback");
     var questionTitleElement = document.getElementById("question-title");
     var choicesElement = document.getElementById("choices");
     // loops through questions and appends question and choices to screen
-    for (var questionObjindex in questions) {
-        var questionObj = questions[questionObjindex];
-        questionTitleElement.innerHTML = questionObj.question;
-        for (var choice of questionObj.choices) {
-            // create input button in choices Element
-            var inputBtn = document.createElement("button");
-            var choiceBtn = choicesElement.appendChild(inputBtn);
-            choiceBtn.setAttribute("value", choice);
-            choiceBtn.innerText = choice;
+    var questionObj = questions[questionsIndex];
+    questionTitleElement.innerHTML = questionObj.question;
+    generateChoices(questionObj);
+    // listens for user click on choice button within choices div
+    choicesElement, addEventListener("click", function (event) {
+        event.stopPropagation();
+        console.log(event);
+        var buttonClicked = (event.target.tagName.toLowerCase() === "button") &&
+            event.path[1].className === "choices";
+        var choiceIsCorrect = event.target.value === questionObj.answer;
+        if (buttonClicked && choiceIsCorrect) {
+            console.log("button - choice is correct");
+            choicesElement.innerHTML = ``;
+            questionsIndex++;
+            asksQuestion();
+            // changeQuestion(questionsIndex);
+        } else if (buttonClicked && !choiceIsCorrect) {
+            console.log("button - choice is wrong");
+            choicesElement.innerHTML = ``;
+            time -= 10;
+            questionsIndex++;
+            asksQuestion()
+            // changeQuestion(questionsIndex);
         }
+    })
+}
+
+function generateChoices(questionObj) {
+    // references choices div
+    var choicesElement = document.getElementById("choices");
+    for (var choice of questionObj.choices) {
+        // create input button in choices Element
+        var inputBtn = document.createElement("button");
+        var choiceBtn = choicesElement.appendChild(inputBtn);
+        choiceBtn.setAttribute("value", choice);
+        choiceBtn.innerText = choice;
     }
+}
+
+// function changeQuestion(questionsIndex) {
+
+// }
+
+function checksChoice(event) {
+
 }
