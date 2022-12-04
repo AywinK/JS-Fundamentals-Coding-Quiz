@@ -87,3 +87,18 @@ li:nth-child(odd) {
   top: 10px;
   right: 10px;
 }
+
+/* custom animation */
+@keyframes grow {
+  from {
+    font-size: inherit;
+  }
+
+  40% {
+    font-size: 2em;
+  }
+
+  100% {
+    font-size: inherit;
+  }
+}
