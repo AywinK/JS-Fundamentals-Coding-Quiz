@@ -1,6 +1,10 @@
 
 // sets time allocated to complete quiz
 var timeAllocated = questions.length * 10;
+// gets timer element on start screen reference
+var timerOnStartElement = document.getElementById("time");
+// adds how much time user is given to do all questions;
+timerOnStartElement.innerText = timeAllocated; 
 // initialises time variable for quiz
 var time = timeAllocated;
 // stores start button reference as variable
