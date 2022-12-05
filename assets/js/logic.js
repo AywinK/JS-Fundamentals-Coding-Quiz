@@ -49,6 +49,7 @@ startBtn.addEventListener("click", function () {
             }
         }
     }, 1000);
+    // asks the first question
     asksQuestion();
 });
 
@@ -59,7 +60,7 @@ var score = 0;
 // checks if user selected an option during quiz
 var choiceIsSelected = false;
 
-// event listener
+// listens for which option user clicks as answer. the choice value is processed within callback function????
 var choicesElement = document.getElementById("choices");
 choicesElement, addEventListener("click", function (event) {
     console.log(event);
@@ -110,16 +111,17 @@ choicesElement, addEventListener("click", function (event) {
     }
 });
 
+// puts question into the webpage
 function asksQuestion() {
     // references to question title element
     var questionTitleElement = document.getElementById("question-title");
-    // loops through questions and appends question and choices to screen
     var questionObj = questions[questionsIndex];
     questionTitleElement.innerHTML = questionObj.question;
     generateChoices(questionObj);
     choiceIsSelected = false;
 }
 
+// generates buttons for each choice in array of property name "choices" for the question object
 function generateChoices(questionObj) {
     // references choices div
     var choicesElement = document.getElementById("choices");
@@ -132,6 +134,7 @@ function generateChoices(questionObj) {
     }
 }
 
+// provides visual and audible feedback
 function givesFeedback(choiceIsCorrect) {
     // references feedback HTML element
     var feedbackElement = document.getElementById("feedback");
@@ -166,7 +169,9 @@ submitBtn.addEventListener("click", function (event) {
     console.log("submit is working");
     // references input field
     var userInitials = document.getElementById("initials");
+    // gets user input
     var initials = userInitials.value;
+    // checks if there is local storage data stored
     var noHiscoresDataFound = localStorage.getItem("hiscoresData") === null;
     if (noHiscoresDataFound) {
         var hiscoresData = [];
@@ -175,13 +180,28 @@ submitBtn.addEventListener("click", function (event) {
         var hiscoresData = JSON.parse(localStorage.getItem("hiscoresData"));
         console.log("hiscores found");
     }
+    // hiscore details put into an object
     var hiscoresDataObj = [{
         initials: initials,
         score: score
     }];
+    // adds hiscores details into array to be put into local storage
     hiscoresData.push(hiscoresDataObj)
+    // turns data into string
     var hiscoresDataString = JSON.stringify(hiscoresData);
     console.log(hiscoresData);
+    // puts JSON string into local storage
     localStorage.setItem("hiscoresData", hiscoresDataString);
+    // redirects to hiscores
     location.href = "highscores.html";
 });
+
+// confirms if user wants to navigate away from quiz and lose all progress
+var allAnchorElements = document.querySelector("a");
+console.log(allAnchorElements);
+allAnchorElements.addEventListener("click", function (event) {
+    var linkIsclicked = confirm("Are you sure you want to leave? Any progress will be lost!");
+    if (!linkIsclicked) {
+        event.preventDefault();
+    }
+})
