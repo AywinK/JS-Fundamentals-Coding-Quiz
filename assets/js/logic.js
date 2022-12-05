@@ -1,14 +1,85 @@
-
+// ------------------------------ GLOBAL VARIABLES ------------------------------
 // sets time allocated to complete quiz
 var timeAllocated = questions.length * 10;
 // gets timer element on start screen reference
 var timerOnStartElement = document.getElementById("time");
-// adds how much time user is given to do all questions;
-timerOnStartElement.innerText = timeAllocated; 
 // initialises time variable for quiz
 var time = timeAllocated;
 // stores start button reference as variable
 var startBtn = document.getElementById("start");
+// initialises questionsIndex
+var questionsIndex = 0;
+// initialises score
+var score = 0;
+// checks if user selected an option during quiz
+var choiceIsSelected = false;
+// references first anchor tag which is currently the anchor tag that links to hiscores
+var allAnchorElements = document.querySelector("a");
+
+// ------------------------------ GLOBAL FUNCTIONS ------------------------------
+// puts question into the webpage
+function asksQuestion() {
+    // references to question title element
+    var questionTitleElement = document.getElementById("question-title");
+    var questionObj = questions[questionsIndex];
+    questionTitleElement.innerHTML = questionObj.question;
+    generateChoices(questionObj);
+    choiceIsSelected = false;
+}
+
+
+// generates buttons for each choice in array of property name "choices" for the question object
+function generateChoices(questionObj) {
+    // references choices div
+    var choicesElement = document.getElementById("choices");
+    for (var choice of questionObj.choices) {
+        // create input button in choices Element
+        var inputBtn = document.createElement("button");
+        var choiceBtn = choicesElement.appendChild(inputBtn);
+        choiceBtn.setAttribute("value", choice);
+        choiceBtn.innerText = choice;
+    }
+}
+
+
+// provides visual and audible feedback
+function givesFeedback(choiceIsCorrect) {
+    // references feedback HTML element
+    var feedbackElement = document.getElementById("feedback");
+    var noAudioElementFound = document.getElementById("feedback-audio") === null;
+    if (noAudioElementFound) {
+        var audioElement = document.createElement("audio");
+        console.log(audioElement);
+        audioElement.setAttribute("id", "feedback-audio");
+    } else {
+        var audioElement = document.getElementById("feedback-audio");
+    }
+    if (choiceIsCorrect) {
+        feedbackElement.innerText = "Correct!";
+        console.log(document.getElementById("feedback-audio"));
+        audioElement.setAttribute("src", "assets/sfx/correct.wav");
+        audioElement.play();
+    } else {
+        feedbackElement.innerText = "Wrong!";
+        audioElement.setAttribute("src", "assets/sfx/incorrect.wav");
+        audioElement.play();
+    }
+    feedbackElement.classList.remove("hide");
+    setTimeout(function () {
+        feedbackElement.classList.add("hide");
+    }, 9000);
+}
+
+// ------------------------------ ALL EVENT LISTENERS ------------------------------
+// confirms if user wants to navigate away from quiz and lose all progress
+allAnchorElements.addEventListener("click", function (event) {
+    var linkIsclicked = confirm("Are you sure you want to leave? Any progress will be lost!");
+    if (!linkIsclicked) {
+        event.preventDefault();
+    }
+})
+
+
 // start button actions
 startBtn.addEventListener("click", function () {
     // stores reference to start screen element
@@ -57,12 +128,6 @@ startBtn.addEventListener("click", function () {
     asksQuestion();
 });
 
-// initialises questionsIndex
-var questionsIndex = 0;
-// initialises score
-var score = 0;
-// checks if user selected an option during quiz
-var choiceIsSelected = false;
 
 // listens for which option user clicks as answer. the choice value is processed within callback function????
 var choicesElement = document.getElementById("choices");
@@ -115,56 +180,6 @@ choicesElement, addEventListener("click", function (event) {
     }
 });
 
-// puts question into the webpage
-function asksQuestion() {
-    // references to question title element
-    var questionTitleElement = document.getElementById("question-title");
-    var questionObj = questions[questionsIndex];
-    questionTitleElement.innerHTML = questionObj.question;
-    generateChoices(questionObj);
-    choiceIsSelected = false;
-}
-
-// generates buttons for each choice in array of property name "choices" for the question object
-function generateChoices(questionObj) {
-    // references choices div
-    var choicesElement = document.getElementById("choices");
-    for (var choice of questionObj.choices) {
-        // create input button in choices Element
-        var inputBtn = document.createElement("button");
-        var choiceBtn = choicesElement.appendChild(inputBtn);
-        choiceBtn.setAttribute("value", choice);
-        choiceBtn.innerText = choice;
-    }
-}
-
-// provides visual and audible feedback
-function givesFeedback(choiceIsCorrect) {
-    // references feedback HTML element
-    var feedbackElement = document.getElementById("feedback");
-    var noAudioElementFound = document.getElementById("feedback-audio") === null;
-    if (noAudioElementFound) {
-        var audioElement = document.createElement("audio");
-        console.log(audioElement);
-        audioElement.setAttribute("id", "feedback-audio");
-    } else {
-        var audioElement = document.getElementById("feedback-audio");
-    }
-    if (choiceIsCorrect) {
-        feedbackElement.innerText = "Correct!";
-        console.log(document.getElementById("feedback-audio"));
-        audioElement.setAttribute("src", "assets/sfx/correct.wav");
-        audioElement.play();
-    } else {
-        feedbackElement.innerText = "Wrong!";
-        audioElement.setAttribute("src", "assets/sfx/incorrect.wav");
-        audioElement.play();
-    }
-    feedbackElement.classList.remove("hide");
-    setTimeout(function () {
-        feedbackElement.classList.add("hide");
-    }, 9000);
-}
 
 // references submit button
 var submitBtn = document.getElementById("submit");
@@ -200,12 +215,6 @@ submitBtn.addEventListener("click", function (event) {
     location.href = "highscores.html";
 });
 
-// confirms if user wants to navigate away from quiz and lose all progress
-var allAnchorElements = document.querySelector("a");
-console.log(allAnchorElements);
-allAnchorElements.addEventListener("click", function (event) {
-    var linkIsclicked = confirm("Are you sure you want to leave? Any progress will be lost!");
-    if (!linkIsclicked) {
-        event.preventDefault();
-    }
-})
+// ------------------------------ RUNS WHEN PAGE LOADS ------------------------------
+// adds how much time user is given to do all questions;
+timerOnStartElement.innerText = timeAllocated; 
