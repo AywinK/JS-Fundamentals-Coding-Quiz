@@ -1,3 +1,7 @@
+// ------------------------------ GLOBAL VARIABLES ------------------------------
+// references clear hiscores button
+var hiscoresBtn = document.getElementById("clear");
+
 
 // searches and verifies hiscores data
 function searchForHiscoresData() {
@@ -15,6 +19,8 @@ function searchForHiscoresData() {
     }
 }
 
+// ------------------------------ GLOBAL FUNCTIONS ------------------------------
+// generates hiscores and adds to webpage
 function generateHiscores(hiscoresLocalStorage) {
     // reorder array from first place to last - function swaps elements based on if function returns negative or positive value
     hiscoresLocalStorage.sort(function (a, b) {
@@ -39,8 +45,8 @@ function generateHiscores(hiscoresLocalStorage) {
     }
 }
 
-// references clear hiscores button
-var hiscoresBtn = document.getElementById("clear");
+
+// ------------------------------ ALL EVENT LISTENERS ------------------------------
 // adds event listener to hiscoresBtn
 hiscoresBtn.addEventListener("click", function (event) {
     console.log(event);
@@ -48,5 +54,6 @@ hiscoresBtn.addEventListener("click", function (event) {
     location.reload();
 })
 
+// ------------------------------ RUNS WHEN PAGE LOADS ------------------------------
 // searchs for hiscores data when page is loaded or reloaded
 searchForHiscoresData();
