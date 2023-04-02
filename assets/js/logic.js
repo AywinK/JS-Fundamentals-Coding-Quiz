@@ -136,7 +136,7 @@ choicesElement, addEventListener("click", function (event) {
     var questionObj = questions[questionsIndex];
     console.log(questionObj.answer);
     var buttonClicked = (event.target.tagName.toLowerCase() === "button") &&
-        event.path[1].className === "choices";
+        event.target.parentNode.className === "choices";
     var choiceIsCorrect = event.target.value === questionObj.answer;
     var isLastQuestion = questionsIndex === questions.length - 1;
     if (isLastQuestion && buttonClicked && choiceIsCorrect) {
